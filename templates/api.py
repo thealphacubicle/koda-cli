@@ -24,7 +24,7 @@ def root():
 def health():
     return {"status": "ok"}
 '''
-    dockerfile = '''FROM python:3.11-slim
+    dockerfile = """FROM python:3.11-slim
 
 WORKDIR /app
 
@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
-'''
+"""
     return [
         (f"{project_name}/src", None),
         (f"{project_name}/src/main.py", main_py),

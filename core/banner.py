@@ -1,8 +1,8 @@
 """Welcome banner for koda CLI."""
 
+import json
 import os
 import subprocess
-import json
 
 # ANSI codes
 RESET = "\033[0m"
@@ -85,9 +85,11 @@ def show_banner() -> None:
     gh_login = _get_gh_login()
     provider = _get_provider()
     projects = _get_projects_path()
-    # Truncate projects path if too long (Projects:     = 14 chars, right panel 41, so 41-14=27 for path)
+    # Truncate projects path if too long (right panel 41 chars, 27 for path)
     max_path_len = 27
-    projects_display = projects if len(projects) <= max_path_len else "..." + projects[-(max_path_len - 3) :]
+    projects_display = (
+        projects if len(projects) <= max_path_len else "..." + projects[-(max_path_len - 3) :]
+    )
 
     # ASCII art: anvil/hammer logo (28 chars wide)
     logo = [
@@ -170,7 +172,10 @@ def show_banner() -> None:
             left_styled = f"{GREEN}{left}{RESET}"
         else:
             left_styled = f"{DIM}{left}{RESET}"
-        line = f"{CYAN}│{RESET}{left_styled}{CYAN}│{RESET}{right_color}{right_text}{RESET}{CYAN}│{RESET}"
+        line = (
+            f"{CYAN}│{RESET}{left_styled}{CYAN}│{RESET}"
+            f"{right_color}{right_text}{RESET}{CYAN}│{RESET}"
+        )
         output.append(line)
     output.append(f"{CYAN}{bottom_line}{RESET}")
 

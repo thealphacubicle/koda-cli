@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import os
-import sys
-import tty
-import termios
 import select as _select
+import sys
+import termios
+import tty
 
-from core.utils import DIM, CYAN, GREEN, RESET, BOLD
+from core.utils import BOLD, CYAN, DIM, GREEN, RESET
 
 
 def _is_tty() -> bool:

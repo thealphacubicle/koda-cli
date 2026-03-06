@@ -1,9 +1,9 @@
 """Shared ANSI styling and terminal utilities for forge CLI."""
 
-import sys
-import time
-import threading
 import itertools
+import sys
+import threading
+import time
 
 # ANSI escape codes
 RESET = "\033[0m"
@@ -53,6 +53,7 @@ def spinner_context(message: str):
     Context manager that shows a spinner while the block runs.
     Uses a background thread for the spinner animation.
     """
+
     class SpinnerContext:
         def __init__(self, msg):
             self.msg = msg

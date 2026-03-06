@@ -1,16 +1,14 @@
 """Interactive REPL for koda CLI."""
 
-import os
-import sys
-
 try:
     import readline  # Enables up-arrow history when using input()
+
     readline.parse_and_bind("tab: complete")
 except ImportError:
     pass  # readline not available on Windows
 
-from core.utils import CYAN, RED, RESET
 from core.banner import show_banner
+from core.utils import CYAN, RED, RESET
 
 
 def start_repl(commands: dict, version: str = "1.0.0"):

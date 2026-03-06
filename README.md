@@ -135,12 +135,39 @@ You're prompted to choose a provider when creating a new project. Make sure the 
 
 ---
 
+## Development
+
+### Dev Container (Codespaces)
+
+Open this repo in [GitHub Codespaces](https://github.com/features/codespaces) for a pre-configured environment with:
+
+- Python 3.12
+- Node.js 20 (for landing page)
+- GitHub CLI (`gh`)
+- Claude Code
+- koda installed in editable mode
+- ruff and pre-commit
+
+### Pre-commit (lint + format with auto-fix)
+
+```bash
+pip install -e ".[dev]"
+pre-commit install
+```
+
+Hooks run on commit and mirror CI: `ruff check --fix` and `ruff format`. Run manually:
+
+```bash
+pre-commit run --all-files
+```
+
 ## Contributing
 
 1. Fork the repo
 2. Clone and install in editable mode: `pip install -e .`
-3. Make your changes
-4. Open a PR
+3. Install dev deps and pre-commit: `pip install -e ".[dev]" && pre-commit install`
+4. Make your changes
+5. Open a PR
 
 ---
 

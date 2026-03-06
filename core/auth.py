@@ -1,9 +1,9 @@
 """Tool authentication checker for koda CLI."""
 
-import subprocess
 import shutil
+import subprocess
 
-from core.utils import typewrite, GREEN, YELLOW, RESET
+from core.utils import GREEN, RESET, YELLOW, typewrite
 
 
 def check_gh() -> bool:
@@ -35,7 +35,11 @@ def check_claude_code() -> bool:
             text=True,
         )
         if install_result.returncode != 0:
-            typewrite(f"  {YELLOW}⚠{RESET} npm install failed. Run manually: npm install -g @anthropic-ai/claude-code", delay=0.01)
+            typewrite(
+                f"  {YELLOW}⚠{RESET} npm install failed. Run manually: "
+                "npm install -g @anthropic-ai/claude-code",
+                delay=0.01,
+            )
             return False
         typewrite(f"  {GREEN}✓{RESET} Claude Code installed.", delay=0.01)
 

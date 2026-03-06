@@ -1,10 +1,9 @@
 """Project scaffolding - creates folder structures from templates."""
 
-import os
 import importlib
-import sys
+import os
 
-from core.utils import typewrite, GREEN, RESET
+from core.utils import GREEN, RESET, typewrite
 
 
 def create_project(name: str, project_type: str, path: str) -> str:
