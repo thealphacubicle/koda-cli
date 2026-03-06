@@ -22,7 +22,7 @@ jobs:
           cache-dependency-path: landing/package-lock.json
       - run: cd landing && npm ci
       - run: cd landing && npm run build
-      - uses: actions/upload-pages-artifact@3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: landing/dist
-      - uses: actions/deploy-pages@4
+      - uses: actions/deploy-pages@v4
