@@ -1,0 +1,85 @@
+---
+const commands = [
+  { cmd: 'koda new <name>', desc: 'Create a new project (interactive prompts)', category: 'main' },
+  { cmd: 'koda config set anthropic', desc: 'Set your Claude API key', category: 'setup' },
+  { cmd: 'koda config set openai', desc: 'Set your OpenAI API key', category: 'setup' },
+  { cmd: 'koda auth', desc: 'Verify gh CLI and AI tools are ready', category: 'setup' },
+  { cmd: 'koda config show', desc: 'View your settings (keys masked)', category: 'config' },
+  { cmd: 'koda help', desc: 'List all commands', category: 'main' },
+];
+---
+
+<section id="docs" class="py-24 px-4 max-w-4xl mx-auto">
+  <p class="text-github-cyan text-xs font-mono tracking-widest">COMMANDS</p>
+  <h2 class="text-3xl md:text-4xl font-semibold text-github-text mt-2">What you'll use most</h2>
+
+  <div class="mt-8">
+    <input
+      type="text"
+      id="command-search"
+      placeholder="search commands..."
+      class="w-full bg-github-bg border border-github-border border-l-4 border-l-github-cyan pl-4 py-3 font-mono text-sm text-github-text placeholder-github-muted focus:outline-none focus:ring-1 focus:ring-github-cyan rounded"
+    />
+
+    <div id="command-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      {commands.map(({ cmd, desc, category }) => (
+        <div
+          class="command-card border border-github-border rounded-lg p-4 relative transition-colors duration-200 hover:border-github-muted/50 bg-github-surface"
+          data-cmd={cmd}
+          data-desc={desc}
+          data-category={category}
+        >
+          <button
+            type="button"
+            class="copy-cmd-btn absolute top-3 right-3 text-xs text-github-muted hover:text-github-text border border-github-border rounded px-2 py-1 transition"
+            data-code={cmd}
+          >
+            copy
+          </button>
+          <code class="block text-github-cyan font-mono text-base pr-16">{cmd}</code>
+          <p class="text-github-muted text-sm mt-2">{desc}</p>
+          <span class="inline-block mt-3 text-[10px] font-mono text-github-muted/70 uppercase tracking-wider">{category}</span>
+        </div>
+      ))}
+    </div>
+
+    <p id="no-results" class="hidden text-center text-github-muted py-12">No commands found.</p>
+  </div>
+</section>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    const search = document.getElementById('command-search')
+    const cards = document.querySelectorAll('.command-card')
+    const noResults = document.getElementById('no-results')
+
+    function filterCards() {
+      const q = (search?.value || '').toLowerCase().trim()
+      let visible = 0
+      cards.forEach((card) => {
+        const cmd = (card.dataset.cmd || '').toLowerCase()
+        const desc = (card.dataset.desc || '').toLowerCase()
+        const category = (card.dataset.category || '').toLowerCase()
+        const match = !q || cmd.includes(q) || desc.includes(q) || category.includes(q)
+        card.classList.toggle('hidden', !match)
+        if (match) visible++
+      })
+      if (noResults) noResults.classList.toggle('hidden', visible > 0)
+    }
+
+    search?.addEventListener('input', filterCards)
+
+    document.querySelectorAll('.copy-cmd-btn').forEach((btn) => {
+      const code = btn.dataset.code
+      if (!code) return
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(code)
+          const orig = btn.textContent
+          btn.textContent = '✓'
+          setTimeout(() => { btn.textContent = orig }, 2000)
+        } catch {}
+      })
+    })
+  })
+</script>

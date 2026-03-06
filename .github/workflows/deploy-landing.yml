@@ -1,0 +1,28 @@
+name: Deploy Landing Page
+
+on:
+  push:
+    branches: [main]
+    paths: [landing/**]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: landing/package-lock.json
+      - run: cd landing && npm ci
+      - run: cd landing && npm run build
+      - uses: actions/upload-pages-artifact@3
+        with:
+          path: landing/dist
+      - uses: actions/deploy-pages@4

@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "koda-cli"
+version = "1.0.0"
+description = "An AI-powered project bootstrapper for developers"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "thealphacubicle"}]
+keywords = ["cli", "bootstrapper", "ai", "project-scaffolding"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+]
+dependencies = [
+    "anthropic",
+    "openai",
+    "google-generativeai",
+]
+
+[project.urls]
+Homepage = "https://github.com/thealphacubicle/koda-cli"
+Repository = "https://github.com/thealphacubicle/koda-cli"
+
+[tool.setuptools.packages.find]
+include = ["core*", "templates*"]
+
+[tool.setuptools]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+extend-exclude = ["landing", "node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]

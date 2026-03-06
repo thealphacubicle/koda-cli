@@ -1,0 +1,359 @@
+#!/usr/bin/env python3
+"""Koda CLI - Project bootstrapper."""
+
+import os
+import sys
+import re
+
+# Add script directory to path for imports
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
+
+from core.utils import typewrite, typewrite_no_newline, print_divider, CYAN, GREEN, RED, YELLOW, DIM, RESET
+from core.auth import check_all
+from core.prompt import select, multiselect, confirm, text_input
+from core.scaffold import create_project
+from core.ai import ask_ai, CONFIG_PATH, _load_config, _save_config, CONFIG_KEYS
+from core.git import init_repo, first_commit, create_and_push
+from core.banner import show_banner
+from core.repl import start_repl
+
+VERSION = "1.0.0"
+
+
+def cmd_help():
+    """Show all commands."""
+    show_banner()
+    print_divider()
+    typewrite(f"{CYAN}Koda Commands{RESET}", delay=0.02)
+    print_divider()
+    typewrite(f"{CYAN}new{RESET}", delay=0.01)
+    typewrite("  koda new <name> --> Create a new project (interactive)", delay=0.01)
+    typewrite(f"{CYAN}auth{RESET}", delay=0.01)
+    typewrite("  koda auth --> Check gh and Claude Code setup", delay=0.01)
+    typewrite(f"{CYAN}config{RESET}", delay=0.01)
+    typewrite("  koda config --> Show or set API keys", delay=0.01)
+    typewrite("  koda config set <provider> --> Set API key for anthropic, openai, or google", delay=0.01)
+    typewrite(f"{CYAN}help{RESET}", delay=0.01)
+    typewrite("  koda help --> Show this help", delay=0.01)
+    typewrite(f"{CYAN}clear{RESET}", delay=0.01)
+    typewrite("  clear --> Clear terminal and redraw banner", delay=0.01)
+    typewrite(f"{CYAN}version{RESET}", delay=0.01)
+    typewrite("  version --> Print koda version", delay=0.01)
+    typewrite(f"{CYAN}cd{RESET}", delay=0.01)
+    typewrite("  cd <path> --> Change working directory", delay=0.01)
+    print_divider()
+
+
+def cmd_auth():
+    """Run auth checker."""
+    show_banner()
+    print_divider()
+    typewrite(f"{CYAN}Checking tools...{RESET}", delay=0.02)
+    print_divider()
+    check_all()
+    print_divider()
+
+
+def cmd_config(args: list[str]):
+    """Show or set API keys."""
+    config = _load_config()
+    providers = ["anthropic", "openai", "google"]
+
+    if not args or args[0] != "set":
+        # Show current config
+        typewrite(f"{CYAN}API Keys (from {CONFIG_PATH}){RESET}", delay=0.02)
+        print_divider()
+        for p in providers:
+            val = config.get(p, "")
+            masked = f"{val[:8]}..." if val and len(val) > 8 else ("(set)" if val else "(not set)")
+            typewrite(f"  {p}: {masked}", delay=0.01)
+        print_divider()
+        typewrite("  Run 'koda config set <provider>' to set a key", delay=0.01)
+        return
+
+    if len(args) < 2:
+        typewrite(f"{RED}Usage: koda config set <anthropic|openai|google>{RESET}", delay=0.01)
+        return
+
+    provider = args[1].lower()
+    if provider not in providers:
+        typewrite(f"{RED}Unknown provider. Use: anthropic, openai, or google{RESET}", delay=0.01)
+        return
+
+    key = input(f"Enter {provider} API key: ").strip()
+    if key:
+        config[provider] = key
+        _save_config(config)
+        typewrite(f"{GREEN}✓{RESET} Saved {provider} key", delay=0.01)
+    else:
+        typewrite(f"{YELLOW}No key entered{RESET}", delay=0.01)
+
+
+def parse_ai_response(response: str) -> dict[str, str]:
+    """Parse AI response in format ## FILE: path or ## path. Returns {path: content}."""
+    files = {}
+    parts = re.split(r"\n##\s+", response)
+    for part in parts:
+        part = part.strip()
+        if not part:
+            continue
+        # First line is path (may have "FILE: " prefix)
+        lines = part.split("\n", 1)
+        path = lines[0].strip()
+        if path.upper().startswith("FILE:"):
+            path = path[5:].strip()
+        content = lines[1].strip() if len(lines) > 1 else ""
+        if path and not path.startswith("#"):
+            files[path] = content
+    return files
+
+
+def cmd_new(name: str):
+    """Full bootstrap flow for new project."""
+    show_banner()
+    print_divider()
+
+    # Project name if not provided
+    if not name:
+        name = text_input("Project name", default="my-project")
+    if not name:
+        typewrite(f"{RED}Project name is required{RESET}", delay=0.01)
+        sys.exit(1)
+
+    # Where to create the project
+    cwd = os.getcwd()
+    home = os.path.expanduser("~")
+    desktop = os.path.join(home, "Desktop")
+    documents = os.path.join(home, "Documents")
+    projects = os.path.join(home, "Projects")
+
+    def _shorten(path: str) -> str:
+        """Shorten path for display, use ~ for home."""
+        if path.startswith(home):
+            return "~" + path[len(home) :]
+        return path
+
+    location_options = [
+        f"Current directory ({_shorten(cwd)})",
+        f"Desktop ({_shorten(desktop)})",
+        f"Documents ({_shorten(documents)})",
+        f"Projects ({_shorten(projects)})",
+        "Other (enter custom path)",
+    ]
+    location_choice = select("Where do you want to create the project?", location_options)
+
+    if location_choice == "Other (enter custom path)":
+        base_path = text_input("Enter path", default=cwd)
+        base_path = os.path.expanduser(base_path.strip()) if base_path else cwd
+    else:
+        path_map = {
+            f"Current directory ({_shorten(cwd)})": cwd,
+            f"Desktop ({_shorten(desktop)})": desktop,
+            f"Documents ({_shorten(documents)})": documents,
+            f"Projects ({_shorten(projects)})": projects,
+        }
+        base_path = path_map.get(location_choice, cwd)
+
+    if not os.path.isdir(base_path):
+        typewrite(f"{YELLOW}Path does not exist, creating: {base_path}{RESET}", delay=0.01)
+        os.makedirs(base_path, exist_ok=True)
+
+    # Project type selector
+    project_type_choice = select(
+        "What type of project?",
+        ["Python data science", "Python API / backend", "Web app (HTML/JS)"],
+    )
+    type_map = {
+        "Python data science": "datascience",
+        "Python API / backend": "api",
+        "Web app (HTML/JS)": "webapp",
+    }
+    project_type = type_map.get(project_type_choice, "datascience")
+
+    # AI provider selector
+    provider_choice = select(
+        "AI provider?",
+        ["Claude", "OpenAI", "Gemini"],
+    )
+    provider_map = {"Claude": "claude", "OpenAI": "openai", "Gemini": "gemini"}
+    provider = provider_map.get(provider_choice, "claude")
+
+    # Features multiselect
+    features = multiselect(
+        "Which features to set up?",
+        ["Create folder structure", "Set up git", "Generate README with AI"],
+    )
+    do_scaffold = "Create folder structure" in features
+    do_git = "Set up git" in features
+    do_ai = "Generate README with AI" in features
+
+    # Require folder structure - can't have a project without it
+    if not do_scaffold:
+        do_scaffold = True
+
+    print_divider()
+
+    # Auth check
+    typewrite(f"{CYAN}Checking tools...{RESET}", delay=0.02)
+    check_all()
+    print_divider()
+
+    # Scaffold
+    project_path = os.path.join(base_path, name)
+    if do_scaffold:
+        typewrite(f"{CYAN}Creating project structure...{RESET}", delay=0.02)
+        project_path = create_project(name, project_type, base_path)
+        print_divider()
+
+    # AI generation
+    type_desc = {"datascience": "data science", "api": "Python API", "webapp": "web app"}
+    prompt = f"""Generate a README.md and starter code for a {type_desc[project_type]} project named "{name}".
+
+Output in this exact format. For each file, write:
+## FILE: <path>
+<file content>
+
+Then the next file:
+## FILE: <path>
+<file content>
+
+Include:
+1. README.md - project description, setup instructions, usage
+2. Key source files with real starter code (not placeholders)
+
+Paths should be relative to project root, e.g. README.md, src/main.py, etc.
+"""
+
+    if do_ai:
+        typewrite(f"{CYAN}Generating README and starter code...{RESET}", delay=0.02)
+        try:
+            response = ask_ai(prompt, provider)
+        except Exception as e:
+            typewrite(f"{RED}AI error: {e}{RESET}", delay=0.01)
+            typewrite("  Continuing with template files only.", delay=0.01)
+            response = ""
+    else:
+        response = ""
+
+    # Parse and write AI-generated files
+    if response:
+        files = parse_ai_response(response)
+        for rel_path, content in files.items():
+            full_path = os.path.join(project_path, rel_path)
+            parent = os.path.dirname(full_path)
+            if parent:
+                os.makedirs(parent, exist_ok=True)
+            with open(full_path, "w") as f:
+                f.write(content)
+            typewrite(f"  {GREEN}✓{RESET} Updated {rel_path}", delay=0.01)
+
+    print_divider()
+
+    # Git (only if selected)
+    if do_git:
+        typewrite(f"{CYAN}Initializing git...{RESET}", delay=0.02)
+        if init_repo(project_path):
+            typewrite(f"  {GREEN}✓{RESET} Git initialized", delay=0.01)
+        else:
+            typewrite(f"  {YELLOW}⚠{RESET} Git init failed", delay=0.01)
+
+        typewrite(f"{CYAN}Making first commit...{RESET}", delay=0.02)
+        if first_commit(project_path):
+            typewrite(f"  {GREEN}✓{RESET} Initial commit created", delay=0.01)
+        else:
+            typewrite(f"  {YELLOW}⚠{RESET} Commit failed (maybe nothing to commit)", delay=0.01)
+
+        typewrite(f"{CYAN}Creating GitHub repo and pushing...{RESET}", delay=0.02)
+        if confirm("Push to GitHub?"):
+            if create_and_push(project_path, name):
+                typewrite(f"  {GREEN}✓{RESET} Repo created and pushed", delay=0.01)
+            else:
+                typewrite(f"  {YELLOW}⚠{RESET} gh repo create failed", delay=0.01)
+        else:
+            typewrite(f"  {DIM}Skipped push{RESET}", delay=0.01)
+
+    print_divider()
+    typewrite(f"{GREEN}Done!{RESET} Project at {project_path}", delay=0.02)
+
+
+def cmd_clear(rest: list[str]):
+    """Clear terminal and redraw banner (REPL only)."""
+    os.system("clear" if os.name != "nt" else "cls")
+    show_banner()
+
+
+def cmd_version(rest: list[str]):
+    """Print koda version (REPL only)."""
+    typewrite(f"Koda v{VERSION}", delay=0.01)
+
+
+def cmd_cd(rest: list[str]):
+    """Change working directory (REPL only)."""
+    if not rest:
+        typewrite(f"{RED}Usage: cd <path>{RESET}", delay=0.01)
+        return
+    path = " ".join(rest)
+    path = os.path.expanduser(path)
+    if not os.path.isdir(path):
+        typewrite(f"{RED}No such directory: {path}{RESET}", delay=0.01)
+        return
+    os.chdir(path)
+    typewrite(f"  {GREEN}✓{RESET} cd {os.getcwd()}", delay=0.01)
+
+
+def _repl_new(rest: list[str]):
+    name = rest[0] if rest else ""
+    cmd_new(name)
+
+
+def _repl_config(rest: list[str]):
+    cmd_config(rest)
+
+
+REPL_COMMANDS = {
+    "new": _repl_new,
+    "auth": lambda rest: cmd_auth(),
+    "config": _repl_config,
+    "help": lambda rest: cmd_help(),
+    "clear": lambda rest: cmd_clear(rest),
+    "version": lambda rest: cmd_version(rest),
+    "cd": lambda rest: cmd_cd(rest),
+}
+
+
+def main():
+    args = sys.argv[1:]
+
+    if not args:
+        start_repl(REPL_COMMANDS, VERSION)
+        return
+
+    cmd = args[0]
+    rest = args[1:]
+
+    if cmd == "--version" or cmd == "-v":
+        print(f"koda {VERSION}")
+        return
+
+    if cmd == "help" or cmd == "-h" or cmd == "--help":
+        cmd_help()
+    elif cmd == "auth":
+        cmd_auth()
+    elif cmd == "config":
+        cmd_config(rest)
+    elif cmd == "new":
+        name = rest[0] if rest else ""
+        cmd_new(name or "")
+    else:
+        typewrite(f"{RED}Unknown command: {cmd}{RESET}", delay=0.01)
+        typewrite("  Run 'koda help' for usage", delay=0.01)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print()
+        sys.exit(130)

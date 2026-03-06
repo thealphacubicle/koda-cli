@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  /* GitHub dark palette */
+  --color-github-bg: #0d1117;
+  --color-github-surface: #161b22;
+  --color-github-border: #21262d;
+  --color-github-text: #e6edf3;
+  --color-github-muted: #8b949e;
+  --color-github-cyan: #00b4d8;
+  --color-github-green: #3fb950;
+  --color-github-yellow: #d29922;
+  --color-github-red: #f85149;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}

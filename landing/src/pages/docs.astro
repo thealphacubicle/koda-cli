@@ -1,0 +1,548 @@
+---
+import '../styles/global.css';
+
+const baseUrl = import.meta.env.BASE_URL || '/koda-cli';
+
+const navSections = [
+  {
+    title: 'Getting Started',
+    links: [
+      { id: 'introduction', label: 'Introduction' },
+      { id: 'installation', label: 'Installation' },
+      { id: 'quick-start', label: 'Quick Start' },
+    ],
+  },
+  {
+    title: 'Guides',
+    links: [
+      { id: 'project-types', label: 'Project Types' },
+      { id: 'ai-providers', label: 'AI Providers' },
+      { id: 'configuration', label: 'Configuration' },
+      { id: 'authentication', label: 'Authentication' },
+    ],
+  },
+  {
+    title: 'Reference',
+    links: [
+      { id: 'commands-reference', label: 'Commands Reference' },
+      { id: 'troubleshooting', label: 'Troubleshooting' },
+    ],
+  },
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Documentation — koda</title>
+    <meta name="description" content="Complete documentation for koda CLI - AI-powered project bootstrapper." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text y='32' font-size='32'>⚒</text></svg>" />
+  </head>
+  <body class="bg-github-bg text-github-text antialiased" data-base-url={baseUrl}>
+    <style is:global>
+      html { scroll-behavior: smooth; }
+      .doc-inline-code {
+        display: inline;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        background: var(--color-github-surface);
+        color: var(--color-github-cyan);
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+      }
+    </style>
+
+    <!-- Nav bar -->
+    <nav class="sticky top-0 z-50 bg-github-bg/90 backdrop-blur border-b border-github-border">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href={baseUrl} class="font-mono font-bold text-github-text text-lg">⚒ koda</a>
+        <div class="flex items-center gap-6">
+          <a href={`${String(baseUrl || '').replace(/\/$/, '')}/docs`} class="text-github-cyan text-sm font-medium">Documentation</a>
+          <a href="https://github.com/thealphacubicle/koda-cli" target="_blank" rel="noopener noreferrer" class="text-github-muted hover:text-github-text text-sm transition">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside id="docs-sidebar" class="hidden lg:block w-64 shrink-0 sticky top-[57px] h-[calc(100vh-57px)] border-r border-github-border bg-github-bg overflow-y-auto">
+        <div class="p-4">
+          <input
+            type="text"
+            id="nav-search"
+            placeholder="Search docs..."
+            class="w-full bg-github-surface border border-github-border rounded px-3 py-2 font-mono text-sm text-github-text placeholder-github-muted focus:outline-none focus:ring-1 focus:ring-github-cyan"
+          />
+          <nav class="mt-4 space-y-6">
+            {navSections.map((section) => (
+              <div>
+                <p class="text-github-muted text-xs font-mono uppercase tracking-wider mb-2">{section.title}</p>
+                <ul class="space-y-1">
+                  {section.links.map((link) => (
+                    <li>
+                      <a
+                        href={`#${link.id}`}
+                        class="nav-link block py-1.5 px-2 rounded text-sm text-github-muted hover:text-github-text hover:bg-github-surface transition"
+                        data-section={link.id}
+                      >
+                        {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Mobile menu button -->
+      <button
+        id="sidebar-toggle"
+        type="button"
+        class="lg:hidden fixed bottom-4 right-4 z-40 w-12 h-12 rounded-full bg-github-cyan text-github-bg flex items-center justify-center text-xl shadow-lg"
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+
+      <!-- Main content -->
+      <main class="flex-1 px-4 py-12 lg:pl-8">
+        <article class="max-w-[720px] mx-auto space-y-16">
+          <!-- Introduction -->
+          <section id="introduction" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Introduction</h1>
+            <p class="text-github-muted leading-relaxed mb-4">
+              <strong class="text-github-text">koda</strong> is an AI-powered project bootstrapper that helps you create new projects in seconds. Instead of manually creating folder structures, writing boilerplate, and configuring tools, koda guides you through an interactive flow and uses AI to generate real starter code.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">What problem does koda solve?</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Starting a new project usually means: creating directories, adding a <code class="doc-inline-code">requirements.txt</code> or <code class="doc-inline-code">package.json</code>, writing a README, initializing git, and maybe setting up a GitHub repo. koda automates all of this and adds AI-generated code tailored to your project type.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Who is it for?</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda is for developers who want to spin up new projects quickly without sacrificing structure or quality. It works especially well for Python data science, Python API backends, and simple web apps.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">How it works</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              You run <code class="doc-inline-code">koda new my-project</code>, answer a few prompts (project type, AI provider, location), and koda creates the folder structure, generates a README and starter code via AI, optionally sets up git, and can push to GitHub. You can also run <code class="doc-inline-code">koda</code> alone to enter an interactive REPL.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Key capabilities</h2>
+            <ul class="text-github-muted leading-relaxed list-disc list-inside space-y-2">
+              <li>Three project types: Python data science, Python API/backend, Web app (HTML/JS)</li>
+              <li>AI-generated README and starter code via Claude, OpenAI, or Gemini</li>
+              <li>Automatic folder scaffolding with sensible defaults</li>
+              <li>Optional git init, first commit, and GitHub repo creation</li>
+              <li>Interactive REPL for running commands without leaving the shell</li>
+            </ul>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- Installation -->
+          <section id="installation" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Installation</h1>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda is installed via pip from the GitHub repository. You need Python 3.9 or higher, git, and the GitHub CLI (<code class="doc-inline-code">gh</code>) for full functionality.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Requirements</h2>
+            <ul class="text-github-muted leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li><strong class="text-github-text">Python 3.9+</strong> — koda is a Python CLI</li>
+              <li><strong class="text-github-text">git</strong> — for version control and repo creation</li>
+              <li><strong class="text-github-text">GitHub CLI (gh)</strong> — for creating and pushing to GitHub repos</li>
+            </ul>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Step 1: Install from GitHub</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Run the following command to install koda:
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>pip install git+https://github.com/thealphacubicle/koda-cli.git</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="pip install git+https://github.com/thealphacubicle/koda-cli.git">copy</button>
+              <span class="absolute top-2 right-14 text-[10px] text-github-muted font-mono">bash</span>
+            </div>
+            <p class="text-github-muted leading-relaxed mb-4">
+              pip will clone the repository and install koda as a command-line tool. The <code class="doc-inline-code">koda</code> command will be available in your PATH.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Step 2: Verify installation</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Run <code class="doc-inline-code">koda help</code> to confirm koda is installed correctly. You should see a list of available commands.
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>koda help</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="koda help">copy</button>
+              <span class="absolute top-2 right-14 text-[10px] text-github-muted font-mono">bash</span>
+            </div>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- Quick Start -->
+          <section id="quick-start" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Quick Start</h1>
+            <p class="text-github-muted leading-relaxed mb-4">
+              This walkthrough covers running <code class="doc-inline-code">koda new</code> from start to finish. You can pass a project name directly or let koda prompt you.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">1. Run koda new</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Run <code class="doc-inline-code">koda new my-project</code> (or <code class="doc-inline-code">koda new</code> to be prompted for a name). koda displays a banner and begins the interactive flow.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">2. Where to create the project</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda asks where you want to create the project. Options include: current directory, Desktop, Documents, Projects, or a custom path. Use arrow keys to select and Enter to confirm.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">3. Project type</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Choose one of: <strong class="text-github-text">Python data science</strong>, <strong class="text-github-text">Python API / backend</strong>, or <strong class="text-github-text">Web app (HTML/JS)</strong>. Each type creates a different folder structure and starter files.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">4. AI provider</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Select which AI to use for generating README and code: <strong class="text-github-text">Claude</strong> (Anthropic), <strong class="text-github-text">OpenAI</strong>, or <strong class="text-github-text">Gemini</strong>. You'll need an API key for your chosen provider (see Configuration).
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">5. Features to set up</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda asks which features to enable: Create folder structure (always on), Set up git, Generate README with AI. Use space to toggle and Enter to confirm.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">6. Auth check</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda checks GitHub CLI and Claude Code. If gh is not logged in, it runs <code class="doc-inline-code">gh auth login</code>. If Claude Code is missing, it attempts to install it via npm.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">7. Project creation</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda creates the folder structure, streams each file as it's created, then calls the AI to generate README and starter code. Files are written to the project directory.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">8. Git and GitHub (optional)</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              If you chose to set up git, koda runs <code class="doc-inline-code">git init</code>, stages all files, and makes an initial commit. If you confirm "Push to GitHub?", it creates a repo via <code class="doc-inline-code">gh repo create</code> and pushes.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Result</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Your project folder contains the scaffolded structure, AI-generated README.md, and starter source files. You can <code class="doc-inline-code">cd</code> into the project and start coding.
+            </p>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- Project Types -->
+          <section id="project-types" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Project Types</h1>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda supports three project types. Each creates a different folder structure and set of files.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Python data science</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Best for Jupyter notebooks, data analysis, and ML experiments. Creates:
+            </p>
+            <ul class="text-github-muted leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li><code class="doc-inline-code">project_name/data/raw</code> and <code class="doc-inline-code">data/processed</code></li>
+              <li><code class="doc-inline-code">project_name/notebooks</code></li>
+              <li><code class="doc-inline-code">project_name/src</code></li>
+              <li><code class="doc-inline-code">project_name/models</code></li>
+              <li><code class="doc-inline-code">requirements.txt</code> with pandas, numpy, matplotlib, scikit-learn, jupyter</li>
+              <li><code class="doc-inline-code">.gitignore</code> and <code class="doc-inline-code">README.md</code></li>
+            </ul>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Choose this when you're building data pipelines, running experiments, or working with notebooks.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Python API / backend</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Best for FastAPI backends and REST APIs. Creates:
+            </p>
+            <ul class="text-github-muted leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li><code class="doc-inline-code">project_name/src/main.py</code> with a FastAPI app</li>
+              <li><code class="doc-inline-code">project_name/src/routes</code> and <code class="doc-inline-code">src/models</code></li>
+              <li><code class="doc-inline-code">project_name/tests</code></li>
+              <li><code class="doc-inline-code">requirements.txt</code> with fastapi, uvicorn, pydantic</li>
+              <li><code class="doc-inline-code">Dockerfile</code> for containerized deployment</li>
+              <li><code class="doc-inline-code">.gitignore</code> and <code class="doc-inline-code">README.md</code></li>
+            </ul>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Choose this when you're building an API, microservice, or backend service.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Web app (HTML/JS)</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Best for simple static or client-side web apps. Creates:
+            </p>
+            <ul class="text-github-muted leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li><code class="doc-inline-code">project_name/src/index.html</code>, <code class="doc-inline-code">style.css</code>, <code class="doc-inline-code">app.js</code></li>
+              <li><code class="doc-inline-code">project_name/assets</code></li>
+              <li><code class="doc-inline-code">.gitignore</code> and <code class="doc-inline-code">README.md</code></li>
+            </ul>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Choose this when you're building a simple front-end app without a build step.
+            </p>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- AI Providers -->
+          <section id="ai-providers" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">AI Providers</h1>
+            <p class="text-github-muted leading-relaxed mb-4">
+              koda supports three AI providers. You choose at runtime when running <code class="doc-inline-code">koda new</code>. Each provider requires an API key, which koda stores locally in <code class="doc-inline-code">~/.koda/config.json</code>. API keys are never sent anywhere except the provider's own API.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Claude (Anthropic)</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Uses Claude Sonnet 4. Get an API key from <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" class="text-github-cyan hover:underline">console.anthropic.com</a>. Koda stores it under the key <code class="doc-inline-code">anthropic</code> in the config file. Run <code class="doc-inline-code">koda config set anthropic</code> to add it.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">ChatGPT (OpenAI)</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Uses GPT-4o. Get an API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="text-github-cyan hover:underline">platform.openai.com</a>. Koda stores it under the key <code class="doc-inline-code">openai</code>. Run <code class="doc-inline-code">koda config set openai</code> to add it.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Gemini (Google)</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Uses Gemini 1.5 Pro. Get an API key from <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" class="text-github-cyan hover:underline">aistudio.google.com</a>. Koda stores it under the key <code class="doc-inline-code">google</code>. Run <code class="doc-inline-code">koda config set google</code> to add it.
+            </p>
+
+            <p class="text-github-muted leading-relaxed mt-6 p-4 bg-github-surface rounded-lg border border-github-border">
+              <strong class="text-github-text">Note:</strong> All API keys are stored locally in <code class="doc-inline-code">~/.koda/config.json</code>. They are never transmitted except to the provider's API when generating code.
+            </p>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- Configuration -->
+          <section id="configuration" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Configuration</h1>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Koda stores configuration in <code class="doc-inline-code">~/.koda/config.json</code>. The file is created automatically when you first set an API key or run config commands.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Config file location</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              <code class="doc-inline-code">~/.koda/config.json</code> (e.g. <code class="doc-inline-code">/Users/you/.koda/config.json</code> on macOS)
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Supported keys</h2>
+            <ul class="text-github-muted leading-relaxed space-y-2 mb-4">
+              <li><code class="doc-inline-code">anthropic</code> — API key for Claude (Anthropic). Default: not set.</li>
+              <li><code class="doc-inline-code">openai</code> — API key for ChatGPT (OpenAI). Default: not set.</li>
+              <li><code class="doc-inline-code">google</code> — API key for Gemini (Google). Default: not set.</li>
+            </ul>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Example config file</h2>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>{`{
+  "anthropic": "sk-ant-...",
+  "openai": "",
+  "google": ""
+}`}</code></pre>
+              <span class="absolute top-2 right-2 text-[10px] text-github-muted font-mono">json</span>
+            </div>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Viewing config</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Run <code class="doc-inline-code">koda config show</code> to see current settings. Keys are masked (only first 8 chars shown) for security.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Updating config</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Run <code class="doc-inline-code">koda config set &lt;provider&gt;</code> where provider is <code class="doc-inline-code">anthropic</code>, <code class="doc-inline-code">openai</code>, or <code class="doc-inline-code">google</code>. Koda will prompt you to enter the API key.
+            </p>
+            <p class="text-github-muted leading-relaxed mb-4">
+              You can also edit <code class="doc-inline-code">~/.koda/config.json</code> directly in a text editor.
+            </p>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- Authentication -->
+          <section id="authentication" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Authentication</h1>
+            <p class="text-github-muted leading-relaxed mb-4">
+              <code class="doc-inline-code">koda auth</code> checks that required tools are installed and authenticated. Run it before creating a project, or if you've changed your setup.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">What koda auth checks</h2>
+            <ul class="text-github-muted leading-relaxed list-disc list-inside space-y-2 mb-4">
+              <li><strong class="text-github-text">GitHub CLI (gh)</strong> — Must be logged in. If not, koda runs <code class="doc-inline-code">gh auth login</code> interactively.</li>
+              <li><strong class="text-github-text">Claude Code</strong> — Must be installed and authenticated. If missing, koda attempts <code class="doc-inline-code">npm install -g @anthropic-ai/claude-code</code>.</li>
+            </ul>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">When a tool is missing or not logged in</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              Koda prints a warning and, where possible, starts the fix (e.g. <code class="doc-inline-code">gh auth login</code>). Complete the auth flow, then re-run <code class="doc-inline-code">koda auth</code> to verify.
+            </p>
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Re-running auth</h2>
+            <p class="text-github-muted leading-relaxed mb-4">
+              If you log out of gh, reinstall Claude Code, or change machines, run <code class="doc-inline-code">koda auth</code> again to re-check and fix.
+            </p>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- Commands Reference -->
+          <section id="commands-reference" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Commands Reference</h1>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">koda</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Open the interactive REPL. Run commands like <code class="doc-inline-code">new</code>, <code class="doc-inline-code">auth</code>, <code class="doc-inline-code">config</code> without typing <code class="doc-inline-code">koda</code> each time.
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>koda</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="koda">copy</button>
+            </div>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">koda new [name]</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Bootstrap a new project. If <code class="doc-inline-code">name</code> is omitted, koda prompts for it. Runs the full interactive flow.
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>koda new my-project</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="koda new my-project">copy</button>
+            </div>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">koda auth</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Check and set up GitHub CLI and Claude Code authentication.
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>koda auth</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="koda auth">copy</button>
+            </div>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">koda config show</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              View current config (API keys masked).
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>koda config show</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="koda config show">copy</button>
+            </div>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">koda config set &lt;provider&gt;</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Set API key for <code class="doc-inline-code">anthropic</code>, <code class="doc-inline-code">openai</code>, or <code class="doc-inline-code">google</code>. Prompts for the key interactively.
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>koda config set anthropic</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="koda config set anthropic">copy</button>
+            </div>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">koda help</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Show all commands and usage.
+            </p>
+            <div class="relative my-4">
+              <pre class="bg-github-surface border border-github-border rounded-lg p-4 overflow-x-auto text-sm"><code>koda help</code></pre>
+              <button type="button" class="copy-block absolute top-2 right-2 px-2 py-1 text-xs border border-github-border rounded text-github-muted hover:text-github-text" data-code="koda help">copy</button>
+            </div>
+          </section>
+
+          <hr class="border-github-border" />
+
+          <!-- Troubleshooting -->
+          <section id="troubleshooting" class="docs-section">
+            <h1 class="text-3xl font-bold text-github-text mb-4">Troubleshooting</h1>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">koda command not found after installing</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              The <code class="doc-inline-code">koda</code> executable may not be in your PATH. Ensure your Python scripts directory is on PATH. Try <code class="doc-inline-code">python -m koda</code> or reinstall with <code class="doc-inline-code">pip install --user git+https://github.com/thealphacubicle/koda-cli.git</code>. On some systems, you may need to restart your terminal.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">API key not being picked up</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Keys are stored in <code class="doc-inline-code">~/.koda/config.json</code>. Run <code class="doc-inline-code">koda config show</code> to verify. If a key shows "(not set)", run <code class="doc-inline-code">koda config set &lt;provider&gt;</code> and enter the key again. Ensure you're using the correct provider name: <code class="doc-inline-code">anthropic</code>, <code class="doc-inline-code">openai</code>, or <code class="doc-inline-code">google</code>.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">gh CLI not authenticated</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Run <code class="doc-inline-code">gh auth login</code> and follow the prompts. Koda will also start this automatically when you run <code class="doc-inline-code">koda auth</code> or <code class="doc-inline-code">koda new</code> if gh is not logged in.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Python version too old</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Koda requires Python 3.9 or higher. Check with <code class="doc-inline-code">python --version</code>. Install a newer Python or use <code class="doc-inline-code">pyenv</code> to manage versions.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">git not installed</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Koda uses git for init and GitHub push. Install git from <a href="https://git-scm.com" target="_blank" rel="noopener noreferrer" class="text-github-cyan hover:underline">git-scm.com</a>. On macOS: <code class="doc-inline-code">xcode-select --install</code>.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Push to GitHub failing</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              Ensure <code class="doc-inline-code">gh auth status</code> shows you're logged in. The repo name must be unique on your GitHub account. If the repo already exists, you may need to add a remote and push manually.
+            </p>
+
+            <h2 class="text-xl font-semibold text-github-text mt-8 mb-3">Terminal animation not showing on the landing page</h2>
+            <p class="text-github-muted leading-relaxed mb-2">
+              The terminal demo uses an inline script that runs on <code class="doc-inline-code">DOMContentLoaded</code>. If the animation doesn't play, ensure JavaScript is enabled and the page has fully loaded. Try a hard refresh (Cmd+Shift+R or Ctrl+Shift+R). If using an ad blocker, it may block inline scripts — try disabling it for the site.
+            </p>
+          </section>
+
+          <!-- Prev/Next nav -->
+          <nav class="flex justify-between pt-8 border-t border-github-border">
+            <a href={baseUrl} class="text-github-cyan hover:underline font-mono text-sm">← Home</a>
+            <a href={`${String(baseUrl || '').replace(/\/$/, '')}/#docs`} class="text-github-cyan hover:underline font-mono text-sm">Quick Reference →</a>
+          </nav>
+        </article>
+      </main>
+    </div>
+
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        const baseUrl = (document.body.dataset.baseUrl || '/koda-cli').replace(/\/$/, '') || '/koda-cli'
+
+        document.querySelectorAll('.copy-block').forEach((btn) => {
+          const code = btn.dataset.code
+          if (!code) return
+          btn.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(code)
+              const orig = btn.textContent
+              btn.textContent = '✓'
+              setTimeout(() => { btn.textContent = orig }, 2000)
+            } catch {}
+          })
+        })
+
+        const navSearch = document.getElementById('nav-search')
+        const navLinks = document.querySelectorAll('.nav-link')
+        if (navSearch) {
+          navSearch.addEventListener('input', () => {
+            const q = navSearch.value.toLowerCase().trim()
+            navLinks.forEach((link) => {
+              const text = link.textContent?.toLowerCase() || ''
+              link.closest('li').style.display = !q || text.includes(q) ? '' : 'none'
+            })
+          })
+        }
+
+        const sections = document.querySelectorAll('.docs-section')
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const id = entry.target.id
+                navLinks.forEach((link) => {
+                  link.classList.toggle('text-github-cyan', link.dataset.section === id)
+                  link.classList.toggle('bg-github-surface', link.dataset.section === id)
+                  link.classList.toggle('text-github-muted', link.dataset.section !== id)
+                })
+              }
+            })
+          },
+          { threshold: 0.3, rootMargin: '-80px 0px -60% 0px' }
+        )
+        sections.forEach((s) => observer.observe(s))
+
+        const sidebar = document.getElementById('docs-sidebar')
+        const toggle = document.getElementById('sidebar-toggle')
+        if (toggle && sidebar) {
+          toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden')
+            sidebar.classList.toggle('fixed')
+            sidebar.classList.toggle('inset-0')
+            sidebar.classList.toggle('z-30')
+            if (!sidebar.classList.contains('hidden')) {
+              sidebar.classList.add('pt-16', 'pb-4')
+            }
+          })
+        }
+      })
+    </script>
+  </body>
+</html>

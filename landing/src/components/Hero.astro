@@ -1,0 +1,56 @@
+---
+const installCmd = 'pip install git+https://github.com/thealphacubicle/koda-cli.git';
+---
+
+<section class="py-32 px-4 text-center">
+  <h1 class="text-5xl md:text-6xl font-bold text-github-text leading-tight">
+    New project.<br />
+    <span class="text-github-cyan">One command.</span>
+  </h1>
+  <p class="text-github-muted text-lg max-w-xl mx-auto text-center mt-4">
+    koda creates your folder structure, writes a README and starter code with AI, and sets up git and GitHub. No copy-pasting boilerplate — just run it and start coding.
+  </p>
+  <div class="mt-8 flex gap-4 justify-center flex-wrap">
+    <button
+      type="button"
+      id="hero-pip-install"
+      class="font-mono bg-github-cyan text-github-bg font-semibold px-5 py-2.5 rounded-lg hover:opacity-90 transition"
+    >
+      pip install koda-cli
+    </button>
+    <a
+      href="https://github.com/thealphacubicle/koda-cli"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="border border-github-border text-github-text px-5 py-2.5 rounded-lg hover:border-github-muted transition inline-block"
+    >
+      View on GitHub →
+    </a>
+  </div>
+  <p class="text-github-muted text-sm mt-4">
+    macOS & Linux · Python 3.9+ · Claude, OpenAI, or Gemini
+  </p>
+</section>
+
+<script define:vars={{ installCmd }}>
+  const btn = document.getElementById('hero-pip-install');
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(installCmd);
+        const orig = btn.textContent;
+        btn.textContent = 'copied! ✓';
+        btn.classList.add('text-github-green');
+        btn.classList.remove('bg-github-cyan', 'text-github-bg');
+        btn.classList.add('bg-github-green', 'text-github-bg');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('text-github-green', 'bg-github-green');
+          btn.classList.add('bg-github-cyan', 'text-github-bg');
+        }, 2000);
+      } catch {
+        // fallback
+      }
+    });
+  }
+</script>

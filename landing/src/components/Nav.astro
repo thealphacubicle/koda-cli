@@ -1,0 +1,45 @@
+---
+const installCmd = 'pip install git+https://github.com/thealphacubicle/koda-cli.git';
+const baseUrl = import.meta.env.BASE_URL;
+---
+
+<nav class="sticky top-0 z-50 bg-github-bg/90 backdrop-blur border-b border-github-border">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href={baseUrl} class="font-mono font-bold text-github-text text-lg">⚒ koda</a>
+    <div class="flex items-center gap-6">
+      <a href={baseUrl} class="hidden md:inline text-github-muted hover:text-github-text text-sm transition">Home</a>
+      <a href={`${String(baseUrl || '').replace(/\/$/, '')}/docs`} class="hidden md:inline text-github-muted hover:text-github-text text-sm transition">Documentation</a>
+      <a href="https://github.com/thealphacubicle/koda-cli" target="_blank" rel="noopener noreferrer" class="text-github-muted hover:text-github-text text-sm transition">GitHub</a>
+      <button
+        type="button"
+        id="nav-pip-install"
+        class="font-mono text-sm bg-github-surface border border-github-cyan text-github-cyan px-3 py-1 rounded hover:opacity-90 transition"
+      >
+        pip install
+      </button>
+    </div>
+  </div>
+</nav>
+
+<script define:vars={{ installCmd }}>
+  const btn = document.getElementById('nav-pip-install');
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(installCmd);
+        const orig = btn.textContent;
+        btn.textContent = 'copied! ✓';
+        btn.classList.add('text-github-green');
+        btn.classList.remove('text-github-cyan', 'border-github-cyan');
+        btn.classList.add('border-github-green');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('text-github-green', 'border-github-green');
+          btn.classList.add('text-github-cyan', 'border-github-cyan');
+        }, 2000);
+      } catch {
+        // fallback for older browsers
+      }
+    });
+  }
+</script>
